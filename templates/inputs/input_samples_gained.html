@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+{% block title %}Samples Gained Data{% endblock %}
+{% block content %}
+
+<h2>Samples Gained</h2>
+    <form action="/submit_data_samples_gained" method="POST">
+        <label for="green_samples">Green Samples:</label>
+        <input type="number" id="green_samples" name="green_samples"><br><br>
+
+        <label for="orange_samples">Orange Samples:</label>
+        <input type="number" id="orange_samples" name="orange_samples"><br><br>
+
+        <label for="violet_samples">Violet Samples:</label>
+        <input type="number" id="violet_samples" name="violet_samples"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div class="button-row">
+        <form action="/input_combat">
+            <input type="submit" value="Input Combat Data">
+        </form>
+        <form action="/input_currency_gained">
+            <input type="submit" value="Input Currency Gained">
+        </form>
+        <form action="/input_objectives_completed">
+            <input type="submit" value="Input Objectives Completed">
+        </form>
+
+    </div>
+{% endblock %}

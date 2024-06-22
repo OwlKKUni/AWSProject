@@ -1,0 +1,42 @@
+{% extends "index.html" %}
+{% block title %}Combat Data{% endblock %}
+{% block content %}
+    <h2>Input Objectives Completed</h2>
+    <form action="/submit_data_objectives_completed" method="POST">
+        <label for="main_objectives">Main Objectives:</label>
+        <input type="number" id="main_objectives" name="main_objectives"><br><br>
+
+        <label for="optional_objectives">Optional Objectives:</label>
+        <input type="number" id="optional_objectives" name="optional_objectives"><br><br>
+
+        <label for="helldivers_extracted">Helldivers Extracted:</label>
+        <input type="number" id="helldivers_extracted" name="helldivers_extracted"><br><br>
+
+        <label for="outposts_destroyed_light">Outposts Destroyed (Light):</label>
+        <input type="number" id="outposts_destroyed_light" name="outposts_destroyed_light"><br><br>
+
+        <label for="outposts_destroyed_medium">Outposts Destroyed (Medium):</label>
+        <input type="number" id="outposts_destroyed_medium" name="outposts_destroyed_medium"><br><br>
+
+        <label for="outposts_destroyed_heavy">Outposts Destroyed (Heavy):</label>
+        <input type="number" id="outposts_destroyed_heavy" name="outposts_destroyed_heavy"><br><br>
+
+        <!-- Single input field for time remaining -->
+        <label for="mission_time_remaining">Mission Time Remaining (in MM:SS.dd format):</label>
+        <input type="text" id="mission_time_remaining" name="mission_time_remaining"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div class="button-row">
+        <form action="/input_combat">
+            <input type="submit" value="Input Combat Data">
+        </form>
+        <form action="/input_currency_gained">
+            <input type="submit" value="Input Currency Gained">
+        </form>
+        <form action="/input_samples_gained">
+            <input type="submit" value="Input Samples Gained">
+        </form>
+    </div>
+{% endblock %}

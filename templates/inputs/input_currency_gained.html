@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+{% block title %}Combat Data{% endblock %}
+{% block content %}
+    <h2>Input Currency Gained</h2>
+    <form action="/submit_data_currency_gained" method="POST">
+        <label for="requisition">Requisition:</label>
+        <input type="number" id="requisition" name="requisition"><br><br>
+
+        <label for="medals">Medals:</label>
+        <input type="number" id="medals" name="medals"><br><br>
+
+        <label for="xp">XP:</label>
+        <input type="number" id="xp" name="xp"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div class="button-row">
+        <form action="/input_combat">
+            <input type="submit" value="Input Combat Data">
+        </form>
+        <form action="/input_objectives_completed">
+            <input type="submit" value="Input Objectives Completed">
+        </form>
+        <form action="/input_samples_gained">
+            <input type="submit" value="Input Samples Gained">
+        </form>
+    </div>
+{% endblock %}
+

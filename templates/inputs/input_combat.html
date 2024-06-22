@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+{% block title %}Combat Data{% endblock %}
+{% block content %}
+<h2>Combat Data</h2>
+    <form action="/submit_data_combat" method="POST">
+        <label for="kills">Kills:</label>
+        <input type="number" id="kills" name="kills"><br><br>
+
+        <label for="accuracy">Accuracy (%):</label>
+        <input type="number" step="0.01" id="accuracy" name="accuracy"><br><br>
+
+        <label for="shots_fired">Shots Fired:</label>
+        <input type="number" id="shots_fired" name="shots_fired"><br><br>
+
+        <label for="deaths">Deaths:</label>
+        <input type="number" id="deaths" name="deaths"><br><br>
+
+        <label for="stims_used">Stims Used:</label>
+        <input type="number" id="stims_used" name="stims_used"><br><br>
+
+        <label for="accidentals">Accidentals:</label>
+        <input type="number" id="accidentals" name="accidentals"><br><br>
+
+        <label for="samples_extracted">Samples Extracted:</label>
+        <input type="number" id="samples_extracted" name="samples_extracted"><br><br>
+
+        <label for="stratagems_used">Stratagems Used:</label>
+        <input type="number" id="stratagems_used" name="stratagems_used"><br><br>
+
+        <label for="melee_kills">Melee Kills:</label>
+        <input type="number" id="melee_kills" name="melee_kills"><br><br>
+
+        <label for="times_reinforcing_">Times Reinforcing:</label>
+        <input type="number" id="times_reinforcing_" name="times_reinforcing_"><br><br>
+
+        <label for="friendly_fire_damage">Friendly Fire Damage:</label>
+        <input type="number" id="friendly_fire_damage" name="friendly_fire_damage"><br><br>
+
+        <label for="distance_travelled">Distance Travelled (m):</label>
+        <input type="number" id="distance_travelled" name="distance_travelled"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div class="button-row">
+        <form action="/input_currency_gained">
+            <input type="submit" value="Input Currency Gained">
+        </form>
+        <form action="/input_objectives_completed">
+            <input type="submit" value="Input Objectives Completed">
+        </form>
+        <form action="/input_samples_gained">
+            <input type="submit" value="Input Samples Gained">
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,192 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.title {
+    text-align: center;
+}
+
+.navi {
+    background-color: #f4f4f4;
+    padding: 10px;
+    text-align: center;
+}
+
+.navi ul {
+    list-style-type: none;
+    padding: 0;
+    white-space: nowrap; /* Prevents wrapping */
+}
+
+.navi ul li {
+    display: inline-block; /* was inline */
+    margin-right: 10px;
+    position: relative; /* Necessary for dropdown positioning */
+}
+
+.navi ul li a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.navi ul li a:hover {
+    background-color: #ccc;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f4f4f4;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    top: 100%; /* Positions the dropdown below the button */
+    left: 0;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.dropdown-content a:hover {
+    background-color: #ccc;
+}
+
+.dropdown-content li {
+    display: block; /* Ensure dropdown items are block-level */
+    margin: 0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content li a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: #333;
+    border: none;
+    border-radius: 0;
+}
+
+.dropdown-content li a:hover {
+    background-color: #ccc;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Show dropdown content on hover */
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px 0;
+    font-size: 16px;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #555;
+}
+
+.button-row {
+    margin-top: 20px;
+}
+.button-row form {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Styles for the header container in the data tab*/
+.header-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.header-container h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.data-section {
+    margin-bottom: 40px; /* Add space between tables */
+}
+
+/* Styles for the data table */
+.data-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+    font-size: 1em;
+    text-align: left;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #dddddd;
+    padding: 12px 15px; /* Increased padding for better readability */
+    text-align: left;
+    word-wrap: break-word; /* Allow column names to wrap */
+}
+
+.data-table th {
+    background-color: #009879; /* Changed background color for header */
+    color: #ffffff; /* White text for header */
+    text-transform: uppercase; /* Uppercase text for header */
+    white-space: normal; /* Allow wrapping */
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #f3f3f3; /* Slightly darker than your previous color */
+}
+
+.data-table tr:hover {
+    background-color: #f1f1f1; /* Lighter hover effect */
+}
+
+.data-table tr {
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+@media screen and (max-width: 600px) {
+    .data-table th, .data-table td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .data-table tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+    .data-table th {
+        text-align: center;
+    }
+}

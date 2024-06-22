@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% block title %}All Dives Data{% endblock %}
+{% block content %}
+<style>
+    .header-container {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center;
+        text-align: center; /* Center text */
+    }
+
+    .header-container h2 {
+        margin: 0;
+    }
+</style>
+<div class="header-container">
+    <h2>All Dives Data</h2>
+</div>
+
+{% for table_name, table_data in data.items() %}
+<div class="data-section">
+    <h3>{{ table_name | replace('_', ' ') | title }} Data</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                {% for column in table_data[0] %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table_data[1:] %}
+                <tr>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+
+<form action="/delete_last_dive" method="POST">
+    <button type="submit">Delete Last Dive</button>
+</form>
+
+{% endblock %}
+

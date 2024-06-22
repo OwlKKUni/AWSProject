@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+{% block title %}Objectives Completed Data{% endblock %}
+{% block content %}
+<div class="header-container">
+    <h2>This page contains objectives completed data statistics.</h2>
+</div>
+
+<table id="dynamicTable" class="data-table">
+    <thead>
+        <tr>
+            {% for column in columns %}
+                <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+            <tr>
+                {% for cell in row %}
+                    <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+

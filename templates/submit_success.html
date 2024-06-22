@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+{% block title %}Submission Successful{% endblock %}
+{% block content %}
+<div class="header-container">
+    <h2>Data submitted successfully</h2>
+</div>
+<script>
+    setTimeout(function(){
+        window.location.href = "{{ url_for('index') }}";
+    }, 3000); // 3000 milliseconds = 3 seconds
+</script>
+{% endblock %}
