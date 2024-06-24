@@ -30,7 +30,7 @@ class SQLQuery:
         return query
 
 
-# Fixed
+# WORKS
 def connect(conn_string: DBConnString):
     try:
         conn = pymysql.connect(
@@ -99,7 +99,7 @@ tquery_combat = SQLQuery(table_name='combat',
 
 # CREATE TABLES
 # ----------------------------
-# works
+# WORKS
 def query_create_tables(server_name: DBConnString, table_queries: list) -> None:
     connection = connect(server_name)
     if connection:
@@ -118,6 +118,7 @@ def query_create_tables(server_name: DBConnString, table_queries: list) -> None:
 
 # READ TABLES
 # ----------------------------
+# WORKS
 def query_read_row(server_name: DBConnString, table: str, row_id: int) -> None:
     sql_query = f"SELECT * FROM {table} WHERE id = %s"
     try:
@@ -137,12 +138,12 @@ def query_read_row(server_name: DBConnString, table: str, row_id: int) -> None:
         print(f"Error reading row from table '{table}': {e}")
 
 
-# Works
-
 # OUTPUT OF IT
 # Connection successful
 # {'id': 3, 'requisition': 1, 'medals': 1, 'xp': 2137}
 # {'id': 4, 'requisition': 1, 'medals': 1, 'xp': 2137}
+
+# WORKS
 def query_read_table(server_name: DBConnString, table: str) -> None:
     sql_query = f"SELECT * FROM {table}"
     try:
@@ -202,13 +203,13 @@ def query_get_table_column_names(server_name: DBConnString, table: str) -> list:
     return data
 
 
-#
+# WORKS
 def query_get_data_from_table(server_name: DBConnString, table: str) -> list:
     with connect(server_name).cursor() as cursor:
         cursor.execute(f"SELECT * FROM {table}")
         columns = [column[0] for column in cursor.description]
         rows = cursor.fetchall()
-        data = [columns] + [list(row) for row in rows]
+        data = [columns] + [list(row.values()) for row in rows]  # Convert dictionary values to list
         return data
 
 
@@ -271,7 +272,7 @@ def query_delete_table(server_name: DBConnString, table_name: str) -> None:
 
 
 def query_delete_row(server_name: DBConnString, table_name: str, id_value: int) -> None:
-    sql_query = f"DELETE FROM {table_name} WHERE id = ?"
+    sql_query = f"DELETE FROM {table_name} WHERE id = %s"
 
     try:
         with connect(server_name).cursor() as cursor:
@@ -317,21 +318,25 @@ def query_put_row(server_name: DBConnString, table_name: str, **kwargs) -> None:
 
 # Aux functions
 # ------------------------
+# WORKS - returns the non-system ID
 def query_get_last_id_value(server_name: DBConnString, table_name: str) -> int:
-    sql_query = f"SELECT TOP 1 id FROM {table_name} ORDER BY id DESC"
+    sql_query = f"SELECT id FROM {table_name} ORDER BY id DESC LIMIT 1"
     try:
         with connect(server_name).cursor() as cursor:
             cursor.execute(sql_query)
             result = cursor.fetchone()
-            return result[0] if result else None
+            return result['id'] if result else None  # Access the result using the column name
 
     except pymysql.MySQLError as e:
-        print(f'query_get_last_id_value()')
+        print('query_get_last_id_value()')
         print(f"Error occurred: {e}")
         return None
 
 
-# dict {columns: [], rows: [()]}
+# W O R K S
+
+# dict {columns: [], rows: [{},{}]}
+# I GUESS??? RETURNS WHAT'S ABOVE ANYWAY
 def query_get_data_by_id(server_name: DBConnString, table: str, id_value: int) -> dict:
     data = {
         "columns": [],
@@ -347,14 +352,10 @@ def query_get_data_by_id(server_name: DBConnString, table: str, id_value: int) -
 
 
 if __name__ == "__main__":
-    # query_put_row(Server1, 'currency_gained', requisition=1, medals=1, xp=2137)
-    query_read_table(Server1, 'currency_gained')
-
-
-
-
-
-
+    # does not fucking work for some reason
+    print(query_get_data_from_table(Server1, 'currency_gained'))
+    query_delete_row(Server1, 'currency_gained', 1)
+    print(query_get_data_from_table(Server1, 'currency_gained'))
 
     # Fix this once you fix put
     # print('\n')
@@ -362,13 +363,6 @@ if __name__ == "__main__":
     #
     # print('\n')
     # query_read_table(Server1, 'currency_gained')
-
-
-
-
-
-
-
 
     # This creates "IF" tables ???
     # query_create_tables(Server1, [tquery_objectives, tquery_combat, tquery_samples, tquery_currency])
