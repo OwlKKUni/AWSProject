@@ -41,7 +41,6 @@ def connect(conn_string: DBConnString):
             port=conn_string.port,
             cursorclass=conn_string.cursorclass
         )
-        print("Connection successful")
         return conn
 
     except pymysql.connect.Error as e:
@@ -215,16 +214,21 @@ def query_get_data_from_table(server_name: DBConnString, table: str) -> list:
 
 # UPDATE
 # ----------------------------
-# test this if it works
+# Works
+# Updates by column "id" not global id
 
 def query_update_cell(server_name: DBConnString, table_name: str, column_name: str, id_: int, value: any) -> None:
-    sql_query = f"UPDATE {table_name} SET {column_name} = ? WHERE id = ?"
+    sql_query = f"UPDATE {table_name} SET {column_name} = %s WHERE id = %s"
 
     try:
-        with connect(server_name).cursor() as cursor:
-            cursor.execute(sql_query, (value, id_))
-            connect(server_name).commit()
-        print(f'Table "{table_name}" updated')
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query, (value, id_))
+            connection.commit()  # Commit outside the cursor context
+            print(f'Table "{table_name}" updated')
+        else:
+            print("Connection to database failed.")
 
     except pymysql.MySQLError as e:
         print(f'Error in query_update_cell()')
@@ -234,6 +238,7 @@ def query_update_cell(server_name: DBConnString, table_name: str, column_name: s
         print(f"An unexpected error occurred: {e}")
 
 
+# Works
 def query_update_row(server_name: DBConnString, table_name: str, id_: int, data: dict) -> None:
     for column_name, value in data.items():
         query_update_cell(server_name, table_name, column_name, id_, value)
@@ -271,26 +276,34 @@ def query_delete_table(server_name: DBConnString, table_name: str) -> None:
         connect(server_name).close()
 
 
+# W O R K S !!!
 def query_delete_row(server_name: DBConnString, table_name: str, id_value: int) -> None:
     sql_query = f"DELETE FROM {table_name} WHERE id = %s"
 
     try:
-        with connect(server_name).cursor() as cursor:
-            cursor.execute(sql_query, (id_value,))
-            connect(server_name).commit()
-        print(f"Row with ID {id_value} deleted from table '{table_name}'")
-
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query, (id_value,))
+            connection.commit()
+            print(f"Row with ID {id_value} deleted from table '{table_name}'")
+        else:
+            print("Connection to database failed.")
     except pymysql.MySQLError as e:
         print(f'Error in query_delete_row()')
         print(f"Error deleting row from table '{table_name}': {e}")
     except Exception as e:
         print(f'Error in query_delete_row()')
         print(f"An unexpected error occurred: {e}")
+    finally:
+        if connection:
+            connection.close()
 
 
 # PUT
 # ----------------------------------------------
 # WORKS
+# Example call: query_put_row(Server1, 'currency_gained', requisition=2, medals=1, xp=2140) -> id is auto assigned
 def query_put_row(server_name: DBConnString, table_name: str, **kwargs) -> None:
     columns = ', '.join(kwargs.keys())
     values_placeholders = ', '.join(['%s'] * len(kwargs))
@@ -325,7 +338,7 @@ def query_get_last_id_value(server_name: DBConnString, table_name: str) -> int:
         with connect(server_name).cursor() as cursor:
             cursor.execute(sql_query)
             result = cursor.fetchone()
-            return result['id'] if result else None  # Access the result using the column name
+            return result['id'] if result else -1  # Access the result using the column name ----THIS WAS NONE BEFORE - NOT -1
 
     except pymysql.MySQLError as e:
         print('query_get_last_id_value()')
@@ -342,27 +355,37 @@ def query_get_data_by_id(server_name: DBConnString, table: str, id_value: int) -
         "columns": [],
         "rows": []
     }
-    with connect(server_name).cursor() as cursor:
-        cursor.execute(f'SELECT * FROM {table} WHERE id = {id_value}')
-        columns = [column[0] for column in cursor.description]
-        rows = cursor.fetchall()
-        data["columns"] = columns
-        data["rows"] = [row for row in rows]
+    try:
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(f'SELECT * FROM {table} WHERE id = %s', (id_value,))
+                rows = cursor.fetchall()
+
+                # Check if rows were returned
+                if rows:
+                    columns = [desc[0] for desc in cursor.description if desc[0] != 'id']
+                    data["columns"] = columns
+                    data["rows"] = [
+                        [value for desc, value in zip(cursor.description, row) if desc[0] != 'id']
+                        for row in rows
+                    ]
+                else:
+                    print(f"No rows found in table '{table}' with id = {id_value}")
+
+    except pymysql.MySQLError as e:
+        print(f"Database error: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        if connection:
+            connection.close()
+
     return data
 
 
 if __name__ == "__main__":
-    # does not fucking work for some reason
     print(query_get_data_from_table(Server1, 'currency_gained'))
-    query_delete_row(Server1, 'currency_gained', 1)
+    # query_update_cell(Server1, 'currency_gained', 'xp', 5, 3000) # works
+    query_update_row(Server1, 'currency_gained', 4, {id: 4, 'requisition': 10, 'medals': 10, 'xp': 9000})
     print(query_get_data_from_table(Server1, 'currency_gained'))
-
-    # Fix this once you fix put
-    # print('\n')
-    # query_read_row(Server1, 'currency_gained', 0)
-    #
-    # print('\n')
-    # query_read_table(Server1, 'currency_gained')
-
-    # This creates "IF" tables ???
-    # query_create_tables(Server1, [tquery_objectives, tquery_combat, tquery_samples, tquery_currency])
