@@ -1,115 +1,3 @@
-<!--{% extends "index.html" %}-->
-<!--{% block title %}Dive Data{% endblock %}-->
-<!--{% block content %}-->
-<!--<style>-->
-<!--    .header-container {-->
-<!--        display: flex;-->
-<!--        justify-content: center; /* Center horizontally */-->
-<!--        align-items: center;-->
-<!--        text-align: center; /* Center text */-->
-<!--    }-->
-
-<!--    .header-container h2 {-->
-<!--        margin: 0;-->
-<!--    }-->
-<!--</style>-->
-<!--<div class="header-container">-->
-<!--    <h2>Detailed Data for last dive - id: {{ max_id }}</h2>-->
-<!--</div>-->
-
-<!--<div class="data-section">-->
-<!--    <h3>Combat Data</h3>-->
-
-<!--    <table id="combatTable" class="data-table">-->
-<!--        <thead>-->
-<!--            <tr>-->
-<!--                {% for column in data['combat']['columns'] %}-->
-<!--                    <th>{{ column }}</th>-->
-<!--                {% endfor %}-->
-<!--            </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--            {% for row in data['combat']['rows'] %}-->
-<!--                <tr>-->
-<!--                    {% for cell in row %}-->
-<!--                        <td>{{ cell }}</td>-->
-<!--                    {% endfor %}-->
-<!--                </tr>-->
-<!--            {% endfor %}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
-
-<!--<div class="data-section">-->
-<!--    <h3>Currency Gained Data</h3>-->
-
-<!--    <table id="currencyTable" class="data-table">-->
-<!--        <thead>-->
-<!--            <tr>-->
-<!--                {% for column in data['currency_gained']['columns'] %}-->
-<!--                    <th>{{ column }}</th>-->
-<!--                {% endfor %}-->
-<!--            </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--            {% for row in data['currency_gained']['rows'] %}-->
-<!--                <tr>-->
-<!--                    {% for cell in row %}-->
-<!--                        <td>{{ cell }}</td>-->
-<!--                    {% endfor %}-->
-<!--                </tr>-->
-<!--            {% endfor %}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
-
-<!--<div class="data-section">-->
-<!--    <h3>Objectives Completed Data</h3>-->
-
-<!--    <table id="objectivesCompletedTable" class="data-table">-->
-<!--        <thead>-->
-<!--            <tr>-->
-<!--                {% for column in data['objectives_completed']['columns'] %}-->
-<!--                    <th>{{ column }}</th>-->
-<!--                {% endfor %}-->
-<!--            </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--            {% for row in data['objectives_completed']['rows'] %}-->
-<!--                <tr>-->
-<!--                    {% for cell in row %}-->
-<!--                        <td>{{ cell }}</td>-->
-<!--                    {% endfor %}-->
-<!--                </tr>-->
-<!--            {% endfor %}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
-
-<!--<div class="data-section">-->
-<!--    <h3>Samples Gained Data</h3>-->
-
-<!--    <table id="samplesGainedTable" class="data-table">-->
-<!--        <thead>-->
-<!--            <tr>-->
-<!--                {% for column in data['samples_gained']['columns'] %}-->
-<!--                    <th>{{ column }}</th>-->
-<!--                {% endfor %}-->
-<!--            </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--            {% for row in data['samples_gained']['rows'] %}-->
-<!--                <tr>-->
-<!--                    {% for cell in row %}-->
-<!--                        <td>{{ cell }}</td>-->
-<!--                    {% endfor %}-->
-<!--                </tr>-->
-<!--            {% endfor %}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
-<!--{% endblock %}-->
-
 {% extends "index.html" %}
 {% block title %}Dive Data{% endblock %}
 {% block content %}
@@ -131,6 +19,7 @@
 
 <div class="data-section">
     <h3>Combat Data</h3>
+
     <table id="combatTable" class="data-table">
         <thead>
             <tr>
@@ -140,27 +29,20 @@
             </tr>
         </thead>
         <tbody>
-            {% if data['combat']['rows'] %}
-                {% for row in data['combat']['rows'] %}
-                    <tr>
-                        {% for cell in row %}
-                            <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            {% else %}
+            {% for row in data['combat']['rows'] %}
                 <tr>
-                    {% for _ in data['combat']['columns'] %}
-                        <td></td>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
                     {% endfor %}
                 </tr>
-            {% endif %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
 
 <div class="data-section">
     <h3>Currency Gained Data</h3>
+
     <table id="currencyTable" class="data-table">
         <thead>
             <tr>
@@ -170,27 +52,20 @@
             </tr>
         </thead>
         <tbody>
-            {% if data['currency_gained']['rows'] %}
-                {% for row in data['currency_gained']['rows'] %}
-                    <tr>
-                        {% for cell in row %}
-                            <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            {% else %}
+            {% for row in data['currency_gained']['rows'] %}
                 <tr>
-                    {% for _ in data['currency_gained']['columns'] %}
-                        <td></td>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
                     {% endfor %}
                 </tr>
-            {% endif %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
 
 <div class="data-section">
     <h3>Objectives Completed Data</h3>
+
     <table id="objectivesCompletedTable" class="data-table">
         <thead>
             <tr>
@@ -200,27 +75,20 @@
             </tr>
         </thead>
         <tbody>
-            {% if data['objectives_completed']['rows'] %}
-                {% for row in data['objectives_completed']['rows'] %}
-                    <tr>
-                        {% for cell in row %}
-                            <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            {% else %}
+            {% for row in data['objectives_completed']['rows'] %}
                 <tr>
-                    {% for _ in data['objectives_completed']['columns'] %}
-                        <td></td>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
                     {% endfor %}
                 </tr>
-            {% endif %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
 
 <div class="data-section">
     <h3>Samples Gained Data</h3>
+
     <table id="samplesGainedTable" class="data-table">
         <thead>
             <tr>
@@ -230,24 +98,15 @@
             </tr>
         </thead>
         <tbody>
-            {% if data['samples_gained']['rows'] %}
-                {% for row in data['samples_gained']['rows'] %}
-                    <tr>
-                        {% for cell in row %}
-                            <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            {% else %}
+            {% for row in data['samples_gained']['rows'] %}
                 <tr>
-                    {% for _ in data['samples_gained']['columns'] %}
-                        <td></td>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
                     {% endfor %}
                 </tr>
-            {% endif %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
 {% endblock %}
-
 

@@ -385,7 +385,37 @@ def query_get_data_by_id(server_name: DBConnString, table: str, id_value: int) -
 
 
 if __name__ == "__main__":
-    print(query_get_data_from_table(Server1, 'currency_gained'))
-    # query_update_cell(Server1, 'currency_gained', 'xp', 5, 3000) # works
-    query_update_row(Server1, 'currency_gained', 4, {id: 4, 'requisition': 10, 'medals': 10, 'xp': 9000})
-    print(query_get_data_from_table(Server1, 'currency_gained'))
+    pass
+
+    # This also works
+
+    # sample_data = {
+    #     'kills': 10,
+    #     'accuracy': 85.5,
+    #     'shots_fired': 200,
+    #     'deaths': 2,
+    #     'stims_used': 5,
+    #     'accidentals': 1,
+    #     'samples_extracted': 3,
+    #     'stratagems_used': 4,
+    #     'melee_kills': 2,
+    #     'times_reinforcing': 3,
+    #     'friendly_fire_damage': 50,
+    #     'distance_travelled': 1000
+    # }
+    #
+    # query_put_row(Server1, 'combat', **sample_data)
+    #
+    # print(query_get_data_from_table(Server1, 'combat'))
+
+
+
+    # This works
+    # sample_data = {
+    #     'requisition': 100,
+    #     'medals': 5,
+    #     'xp': 2500
+    # }
+    # query_put_row(Server1, 'currency_gained', **sample_data)
+    # print(query_get_data_from_table(Server1, 'currency_gained'))
+
