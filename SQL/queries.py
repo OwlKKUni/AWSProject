@@ -1,5 +1,6 @@
 import os
 import pymysql
+import time
 
 
 class DBConnString:
@@ -99,18 +100,38 @@ tquery_combat = SQLQuery(table_name='combat',
 # CREATE TABLES
 # ----------------------------
 # WORKS
-def query_create_tables(server_name: DBConnString, table_queries: list) -> None:
+
+# OLD
+# def query_create_tables(server_name: DBConnString, table_queries: list) -> None:
+#     connection = connect(server_name)
+#     if connection:
+#         try:
+#             with connection.cursor() as cursor:
+#                 for table_query in table_queries:
+#                     cursor.execute(table_query)
+#                     print(f'Table "{table_query.split(" ")[2]}" created')
+#
+#                 connection.commit()
+#         except pymysql.MySQLError as e:
+#             print(f'Error in query_create_tables()')
+#             print(f"Error creating tables: {e}")
+#         finally:
+#             connection.close()
+
+# NEW
+def query_create_tables(server_name: DBConnString, db_name: str, table_queries: list) -> None:
     connection = connect(server_name)
     if connection:
         try:
             with connection.cursor() as cursor:
+                cursor.execute(f"USE {db_name}")  # Switch to the target database
                 for table_query in table_queries:
                     cursor.execute(table_query)
                     print(f'Table "{table_query.split(" ")[2]}" created')
                 connection.commit()
         except pymysql.MySQLError as e:
             print(f'Error in query_create_tables()')
-            print(f"Error creating tables: {e}")
+            print(f"Error creating tables in database '{db_name}': {e}")
         finally:
             connection.close()
 
@@ -338,7 +359,8 @@ def query_get_last_id_value(server_name: DBConnString, table_name: str) -> int:
         with connect(server_name).cursor() as cursor:
             cursor.execute(sql_query)
             result = cursor.fetchone()
-            return result['id'] if result else -1  # Access the result using the column name ----THIS WAS NONE BEFORE - NOT -1
+            return result[
+                'id'] if result else -1  # Access the result using the column name ----THIS WAS NONE BEFORE - NOT -1
 
     except pymysql.MySQLError as e:
         print('query_get_last_id_value()')
@@ -384,8 +406,206 @@ def query_get_data_by_id(server_name: DBConnString, table: str, id_value: int) -
     return data
 
 
+# Additions --------------------------------------
+def query_check_db_exists(server_name: DBConnString, db_name: str) -> bool:
+    sql_query = f"SHOW DATABASES LIKE '{db_name}'"
+    try:
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query)
+                result = cursor.fetchone()
+                print(bool(result))
+                return bool(result)
+        else:
+            print("Connection to database failed.")
+            return False
+    except pymysql.MySQLError as e:
+        print(f'Error in query_check_db_exists()')
+        print(f"Error checking if database exists: {e}")
+        return False
+    finally:
+        if connection:
+            connection.close()
+
+
+def query_check_table_exists(server_name: DBConnString, db_name: str, table_name: str) -> bool:
+    sql_query = f"SHOW TABLES FROM {db_name} LIKE '{table_name}'"
+    try:
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query)
+                result = cursor.fetchone()
+                return bool(result)
+        else:
+            print("Connection to database failed.")
+            return False
+    except pymysql.MySQLError as e:
+        print(f'Error in query_check_table_exists()')
+        print(f"Error checking if table '{table_name}' exists in database '{db_name}': {e}")
+        return False
+    finally:
+        if connection:
+            connection.close()
+
+
+def query_create_db(server_name: DBConnString, db_name: str) -> None:
+    sql_query = f"CREATE DATABASE IF NOT EXISTS {db_name}"
+    try:
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query)
+            connection.commit()
+            print(f"Database '{db_name}' created")
+        else:
+            print("Connection to database failed.")
+    except pymysql.MySQLError as e:
+        print(f'Error in query_create_db()')
+        print(f"Error creating database '{db_name}': {e}")
+    finally:
+        if connection:
+            connection.close()
+
+
+def query_delete_db(server_name: DBConnString, db_name: str) -> None:
+    sql_query = f"DROP DATABASE IF EXISTS {db_name}"
+    try:
+        connection = connect(server_name)
+        if connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query)
+                print(f"Database '{db_name}' deleted")
+            connection.commit()  # Commit the change
+        else:
+            print("Connection to database failed.")
+    except pymysql.MySQLError as e:
+        print(f'Error in query_delete_db()')
+        print(f"Error deleting database '{db_name}': {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred while deleting database '{db_name}': {e}")
+    finally:
+        if connection:
+            connection.close()
+
+
+def create_table_if_not_exists(connection, table_name, table_creation_query):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(f"SHOW TABLES LIKE '{table_name}'")
+            table_exists = cursor.fetchone()
+
+            if not table_exists:
+                print(f"Table '{table_name}' does not exist. Creating...")
+                cursor.execute(table_creation_query)
+                connection.commit()  # Commit table creation
+                print(f"Table '{table_name}' created.")
+            else:
+                print(f"Table '{table_name}' already exists.")
+    except pymysql.MySQLError as e:
+        print(f"Error creating table '{table_name}': {e}")
+
+
+def setup_db_and_tables(server_name: DBConnString):
+    db_name = 'DBTest1'
+    db_created = False
+    db_exists = False  # Initialize db_exists variable
+    max_wait_time = 30  # Wait up to 30 seconds for the database creation
+    wait_time_interval = 5  # Wait 5 seconds between checks
+
+    # Step 1: Try connecting to the MySQL server without a database (i.e., database=None)
+    connection = connect(DBConnString(
+        server_name.server,  # Same server
+        '',  # No database specified initially
+        server_name.username,
+        server_name.password,
+        server_name.port
+    ))  # Use the connection without a database
+
+    if connection:
+        try:
+            # Step 2: If connection successful, move to database existence check and creation
+            with connection.cursor() as cursor:
+                cursor.execute(f"SHOW DATABASES LIKE '{db_name}'")
+                db_exists = cursor.fetchone()
+
+                # If the database doesn't exist, create it
+                if not db_exists:
+                    print(f"Database '{db_name}' does not exist. Creating...")
+                    cursor.execute(f"CREATE DATABASE {db_name}")
+                    connection.commit()  # Commit the database creation
+                    print(f"Database '{db_name}' creation initiated.")
+                    connection.close()  # Close the initial connection
+
+                    # Wait for the database to be created and check periodically
+                    start_time = time.time()
+                    while time.time() - start_time < max_wait_time:
+                        # Reconnect to the MySQL server without selecting a database
+                        connection = connect(server_name)
+                        if connection:
+                            with connection.cursor() as cursor:
+                                cursor.execute(f"SHOW DATABASES LIKE '{db_name}'")
+                                db_exists = cursor.fetchone()
+                                if db_exists:
+                                    db_created = True
+                                    print(f"Database '{db_name}' successfully created.")
+                                    break  # Exit the loop once the database is created
+                        if not db_created:
+                            print(f"Waiting for database '{db_name}' to be created...")
+                            time.sleep(wait_time_interval)  # Wait before checking again
+
+                    # If the database is not created within the time limit, raise an error
+                    if not db_created:
+                        raise Exception(f"Database '{db_name}' could not be created within {max_wait_time} seconds.")
+
+                else:
+                    print(f"Database '{db_name}' already exists.")
+
+        except pymysql.MySQLError as e:
+            print(f"Error in setup_db_and_tables(): {e}")
+        finally:
+            # Close the connection after performing the database check/creation
+            connection.close()
+
+        # Step 3: If the database was created or already exists, proceed to create tables
+        if db_created or db_exists:
+            # Reconnect to the specific database DBTest1
+            connection = connect(DBConnString(
+                server_name.server,  # Same server
+                db_name,  # The created or already existing database
+                server_name.username,
+                server_name.password,
+                server_name.port
+            ))  # Now connect with the DB
+
+            if connection:
+                try:
+                    connection.select_db(db_name)  # Select DBTest1 after connection
+
+                    # Step 4: Create tables if they don't exist
+                    create_table_if_not_exists(connection, 'objectives_completed', tquery_objectives)
+                    create_table_if_not_exists(connection, 'samples_gained', tquery_samples)
+                    create_table_if_not_exists(connection, 'currency_gained', tquery_currency)
+                    create_table_if_not_exists(connection, 'combat', tquery_combat)
+
+                except pymysql.MySQLError as e:
+                    print(f"Error while creating tables: {e}")
+                finally:
+                    # Close the connection after performing the table creation
+                    connection.close()
+            else:
+                print(f"Failed to reconnect to the database '{db_name}' after creation.")
+
+    else:
+        print("Connection to the MySQL server failed.")
+
+
 if __name__ == "__main__":
     pass
+    # BOTH WORK
+    # query_delete_db(Server1, "DBTest1")
+    # setup_db_and_tables(Server1)
 
     # This also works
 
@@ -408,8 +628,6 @@ if __name__ == "__main__":
     #
     # print(query_get_data_from_table(Server1, 'combat'))
 
-
-
     # This works
     # sample_data = {
     #     'requisition': 100,
@@ -418,4 +636,3 @@ if __name__ == "__main__":
     # }
     # query_put_row(Server1, 'currency_gained', **sample_data)
     # print(query_get_data_from_table(Server1, 'currency_gained'))
-

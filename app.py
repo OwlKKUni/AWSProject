@@ -304,4 +304,5 @@ def delete_last_dive():
 
 
 if __name__ == '__main__':
+    setup_db_and_tables(Server1)  # Ensure the database is set up before running the app
     app.run(debug=True)

@@ -1,9 +1,9 @@
 import pymysql
 
 # Database connection details
-rds_host = "kakepa-final-sql-db.cng0we28yzs1.us-east-1.rds.amazonaws.com"
+rds_host = "kakepa-final-mysql-db-1.c04vdpgrzemq.us-east-1.rds.amazonaws.com"
 rds_user = "admin"
-rds_password = "DolphinDB11!"
+rds_password = "BlueDolphin11!"
 
 
 # Connect to the database
@@ -117,15 +117,4 @@ def delete_table(db_name, table_name):
 
 
 if __name__ == "__main__":
-    # new_table_columns = {
-    #     "id": "INT AUTO_INCREMENT PRIMARY KEY",
-    #     "name": "VARCHAR(255) NOT NULL",
-    #     "email": "VARCHAR(255) NOT NULL UNIQUE",
-    #     "age": "INT"
-    # }
-    #
-    # create_database('DBTest1')
-    #
-    # create_table('DBTest1', "Test1Table1", new_table_columns)
-
     print_dbs_and_tables()
