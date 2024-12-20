@@ -91,7 +91,7 @@ tquery_combat = SQLQuery(table_name='combat',
                          samples_extracted='INT',
                          stratagems_used='INT',
                          melee_kills='INT',
-                         times_reinforcing='INT',
+                         times_reinforcing='INT',  # deleted _ at the end everywhere
                          friendly_fire_damage='INT',
                          distance_travelled='INT',
                          ).generate_query()
@@ -188,9 +188,9 @@ def query_read_table(server_name: DBConnString, table: str) -> None:
 # ----------------------------
 # WORKS
 def query_get_table_names(server_name: DBConnString):
-    # Stupid fucking fix that takes into account 156 tables created on database creation - OH WELL...
-    # I AM SO FUCKING TIRED MAN...
-    sql_query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' LIMIT 156, 1000000"
+    # FUCKING FIXED THE BITCH
+    # WAS 156 - 10000000000 - FUCKERS CHANGED THE DATA LOCATION
+    sql_query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' LIMIT 0, 4"
 
     try:
         with connect(server_name).cursor() as cursor:
@@ -381,15 +381,27 @@ def query_get_data_by_id(server_name: DBConnString, table: str, id_value: int) -
         connection = connect(server_name)
         if connection:
             with connection.cursor() as cursor:
-                cursor.execute(f'SELECT * FROM {table} WHERE id = %s', (id_value,))
+                # Log the SQL query being executed
+                sql_query = f'SELECT * FROM {table} WHERE id = %s'
+                print(f"Executing query: {sql_query} with id_value: {id_value}")
+
+                # Execute the query
+                cursor.execute(sql_query, (id_value,))
                 rows = cursor.fetchall()
 
                 # Check if rows were returned
                 if rows:
-                    columns = [desc[0] for desc in cursor.description if desc[0] != 'id']
+                    # Log the rows returned by the query
+                    print(f"Rows fetched: {rows}")
+
+                    # Extract column names, excluding 'id'
+                    columns = [key for key in rows[0].keys() if
+                               key != 'id']  # Get column names dynamically from the first row
                     data["columns"] = columns
+
+                    # Extract the values from the rows, excluding the 'id' column
                     data["rows"] = [
-                        [value for desc, value in zip(cursor.description, row) if desc[0] != 'id']
+                        [row[col] for col in columns]  # Extract only values for the columns (excluding 'id')
                         for row in rows
                     ]
                 else:
@@ -603,6 +615,11 @@ def setup_db_and_tables(server_name: DBConnString):
 
 if __name__ == "__main__":
     pass
+    # test
+    print(query_get_table_names(Server1))
+
+
+
     # BOTH WORK
     # query_delete_db(Server1, "DBTest1")
     # setup_db_and_tables(Server1)

@@ -14,6 +14,7 @@ def index():
 def dive():
     table_names = query_get_table_names(Server1)
     max_id = max(query_get_last_id_value(Server1, table) for table in table_names)
+
     data = {}
     for table in table_names:
         data[table] = query_get_data_by_id(Server1, table, max_id)
@@ -131,7 +132,7 @@ def submit_data_combat():
         'samples_extracted': int(request.form['samples_extracted']),
         'stratagems_used': int(request.form['stratagems_used']),
         'melee_kills': int(request.form['melee_kills']),
-        'times_reinforcing_': int(request.form['times_reinforcing_']),
+        'times_reinforcing': int(request.form['times_reinforcing']),
         'friendly_fire_damage': int(request.form['friendly_fire_damage']),
         'distance_travelled': int(request.form['distance_travelled']),
     }
